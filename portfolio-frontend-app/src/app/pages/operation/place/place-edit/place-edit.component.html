@@ -1,0 +1,82 @@
+<po-page-default [p-title]="this.literals.title" [p-actions]="pageActions">
+  <form [formGroup]="placeForm">
+    <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
+      <po-input
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="placeName"
+        name="placeName"
+        p-clean
+        [p-label]="this.literals.fields.form['placeName']"
+        p-maxlength="100"
+        [p-readonly]="readonly"
+        p-required
+      > </po-input>
+    </div>
+
+    <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
+      <po-combo
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="customerId"
+        name="customerId"
+        p-clean
+        [p-disabled]="readonly"
+        [p-filter-service]="customerIdService"
+        [p-label]="this.literals.fields.form['customerId']"
+        p-required
+      > </po-combo>
+    </div>
+
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-6 no-padding">
+      <po-combo
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="stateId"
+        name="stateId"
+        (p-change)="stateIdChange($event)"
+        p-clean
+        [p-disabled]="readonly"
+        [p-filter-service]="stateIdService"
+        [p-label]="this.literals.fields.form['stateId']"
+        p-required
+      > </po-combo>
+    </div>
+
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-6 no-padding">
+      <po-combo
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="cityId"
+        name="cityId"
+        p-clean
+        [p-disabled]="readonly"
+        [p-filter-service]="cityIdService"
+        [p-label]="this.literals.fields.form['cityId']"
+        p-required
+      > </po-combo>
+    </div>
+
+    <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
+      <po-input
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="size"
+        name="size"
+        p-clean
+        [p-label]="this.literals.fields.form['size']"
+        p-maxlength="100"
+        [p-readonly]="readonly"
+        p-required
+      > </po-input>
+    </div>
+
+    <div class="po-sm-12 po-md-12 po-lg-12 po-xl-12 no-padding">
+      <po-input
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12"
+        formControlName="address"
+        name="address"
+        p-clean
+        [p-label]="this.literals.fields.form['address']"
+        p-maxlength="4096"
+        [p-readonly]="readonly"
+      > </po-input>
+    </div>
+
+  </form>
+</po-page-default>

@@ -1,0 +1,30 @@
+<po-page-default [p-title]="this.literals.title" [p-actions]="pageActions">
+  <form [formGroup]="countryForm">
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-6 no-padding">
+      <po-input
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="countryName"
+        name="countryName"
+        p-clean
+        [p-label]="this.literals.fields.form['countryName']"
+        p-maxlength="60"
+        [p-readonly]="readonly"
+        p-required
+      > </po-input>
+    </div>
+
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-6 no-padding">
+      <po-input
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        formControlName="countryCode"
+        name="countryCode"
+        p-clean
+        [p-label]="this.literals.fields.form['countryCode']"
+        p-maxlength="60"
+        [p-readonly]="readonly"
+        p-required
+      > </po-input>
+    </div>
+
+  </form>
+</po-page-default>
