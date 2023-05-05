@@ -6,7 +6,8 @@ interface IRequest {
   search: string,
   page: number,
   rowsPerPage: number,
-  order: string
+  order: string,
+  filter?: string
 }
 
 interface ResponseProps {
@@ -25,7 +26,8 @@ class ListCityUseCase {
     search = '',
     page = 0,
     rowsPerPage = 50,
-    order = ''
+    order = '',
+    filter
   }: IRequest): Promise<ResponseProps> {
     const newPage = page !== 0 ? page - 1 : 0
 
@@ -33,11 +35,13 @@ class ListCityUseCase {
       search,
       newPage,
       rowsPerPage,
-      order
+      order,
+      filter
     )
 
     const countCities = await this.cityRepository.count(
-      search
+      search,
+      filter
     )
 
     const numeroCity = page * rowsPerPage

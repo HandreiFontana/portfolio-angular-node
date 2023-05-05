@@ -23,7 +23,7 @@ const deleteModuleController = new DeleteModuleController()
 const multiDeleteModuleController = new MultiDeleteModuleController()
 
 modulesRoutes.post('/', ensureAuthenticated, createModuleController.handle )
-modulesRoutes.get('/', ensureAuthenticated, listModuleController.handle)
+modulesRoutes.post('/list', ensureAuthenticated, listModuleController.handle)
 modulesRoutes.post('/count', ensureAuthenticated, countModuleController.handle)
 modulesRoutes.get('/select/:id', ensureAuthenticated, idSelectModuleController.handle)
 modulesRoutes.get('/select', ensureAuthenticated, selectModuleController.handle)

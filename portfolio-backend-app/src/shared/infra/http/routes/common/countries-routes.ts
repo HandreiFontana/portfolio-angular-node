@@ -23,7 +23,7 @@ const deleteCountryController = new DeleteCountryController()
 const multiDeleteCountryController = new MultiDeleteCountryController()
 
 countriesRoutes.post('/', ensureAuthenticated, createCountryController.handle )
-countriesRoutes.get('/', ensureAuthenticated, listCountryController.handle)
+countriesRoutes.post('/list', ensureAuthenticated, listCountryController.handle)
 countriesRoutes.post('/count', ensureAuthenticated, countCountryController.handle)
 countriesRoutes.get('/select/:id', ensureAuthenticated, idSelectCountryController.handle)
 countriesRoutes.get('/select', ensureAuthenticated, selectCountryController.handle)

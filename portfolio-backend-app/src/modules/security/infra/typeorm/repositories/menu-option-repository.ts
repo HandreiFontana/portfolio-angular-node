@@ -75,7 +75,8 @@ class MenuOptionRepository implements IMenuOptionRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -180,6 +181,7 @@ class MenuOptionRepository implements IMenuOptionRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const menuOptions = await this.repository.createQueryBuilder('men')

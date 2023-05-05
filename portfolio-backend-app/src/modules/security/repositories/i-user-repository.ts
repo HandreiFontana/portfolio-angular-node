@@ -11,7 +11,8 @@ interface IUserRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse>
 
 
@@ -24,7 +25,7 @@ interface IUserRepository {
 
 
   // count
-  count (search: string): Promise<HttpResponse>
+  count (search: string, filter?: string): Promise<HttpResponse>
 
 
   // get

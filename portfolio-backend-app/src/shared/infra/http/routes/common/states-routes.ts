@@ -23,7 +23,7 @@ const deleteStateController = new DeleteStateController()
 const multiDeleteStateController = new MultiDeleteStateController()
 
 statesRoutes.post('/', ensureAuthenticated, createStateController.handle )
-statesRoutes.get('/', ensureAuthenticated, listStateController.handle)
+statesRoutes.post('/list', ensureAuthenticated, listStateController.handle)
 statesRoutes.post('/count', ensureAuthenticated, countStateController.handle)
 statesRoutes.get('/select/:id', ensureAuthenticated, idSelectStateController.handle)
 statesRoutes.get('/select', ensureAuthenticated, selectStateController.handle)

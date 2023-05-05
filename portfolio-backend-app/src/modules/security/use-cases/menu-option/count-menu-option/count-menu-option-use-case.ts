@@ -5,6 +5,7 @@ import { HttpResponse } from '@shared/helpers'
 
 interface IRequest {
   search: string,
+  filter?: string
 }
 
 @injectable()
@@ -15,10 +16,12 @@ class CountMenuOptionUseCase {
   ) {}
 
   async execute({
-    search
+    search,
+    filter
   }: IRequest): Promise<HttpResponse> {
     const menuOptionsCount = await this.menuOptionRepository.count(
-      search
+      search,
+      filter
     )
 
     return menuOptionsCount

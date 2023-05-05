@@ -23,7 +23,7 @@ const deleteProfileOptionController = new DeleteProfileOptionController()
 const multiDeleteProfileOptionController = new MultiDeleteProfileOptionController()
 
 profileOptionsRoutes.post('/', ensureAuthenticated, createProfileOptionController.handle )
-profileOptionsRoutes.get('/', ensureAuthenticated, listProfileOptionController.handle)
+profileOptionsRoutes.post('/list', ensureAuthenticated, listProfileOptionController.handle)
 profileOptionsRoutes.post('/count', ensureAuthenticated, countProfileOptionController.handle)
 profileOptionsRoutes.get('/select/:id', ensureAuthenticated, idSelectProfileOptionController.handle)
 profileOptionsRoutes.get('/select', ensureAuthenticated, selectProfileOptionController.handle)

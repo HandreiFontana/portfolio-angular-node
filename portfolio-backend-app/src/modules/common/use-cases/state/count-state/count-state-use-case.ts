@@ -5,6 +5,7 @@ import { HttpResponse } from '@shared/helpers'
 
 interface IRequest {
   search: string,
+  filter?: string
 }
 
 @injectable()
@@ -15,10 +16,12 @@ class CountStateUseCase {
   ) {}
 
   async execute({
-    search
+    search,
+    filter
   }: IRequest): Promise<HttpResponse> {
     const statesCount = await this.stateRepository.count(
-      search
+      search,
+      filter
     )
 
     return statesCount

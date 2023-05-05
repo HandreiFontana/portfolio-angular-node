@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm'
+import { Brackets, getRepository, Repository } from 'typeorm'
 import { IStateDTO } from '@modules/common/dtos/i-state-dto'
 import { IStateRepository } from '@modules/common/repositories/i-state-repository'
 import { State } from '@modules/common/infra/typeorm/entities/state'
@@ -42,7 +42,8 @@ class StateRepository implements IStateRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -68,19 +69,28 @@ class StateRepository implements IStateRepository {
     const offset = rowsPerPage * page
 
     try {
-      let states = await this.repository.createQueryBuilder('sta')
+      let query = this.repository.createQueryBuilder('sta')
         .select([
           'sta.id as "id"',
           'sta.federativeUnit as "federativeUnit"',
           'sta.stateName as "stateName"',
         ])
-        .where('CAST(sta.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
-        .orWhere('CAST(sta.stateName AS VARCHAR) ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const states = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(sta.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(sta.stateName AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .addOrderBy('sta.federativeUnit', columnOrder[0])
         .addOrderBy('sta.stateName', columnOrder[1])
-        .take(rowsPerPage)
-        .skip(offset)
+        .offset(offset)
         .limit(rowsPerPage)
+        .take(rowsPerPage)
         .getRawMany()
 
       return ok(states)
@@ -130,14 +140,24 @@ class StateRepository implements IStateRepository {
   // count
   async count (
     search: string,
+    filter: string
   ): Promise<HttpResponse> {
     try {
-      const states = await this.repository.createQueryBuilder('sta')
+      let query = this.repository.createQueryBuilder('sta')
         .select([
           'sta.id as "id"',
         ])
-        .where('sta.federativeUnit ilike :search', { search: `%${search}%` })
-        .orWhere('sta.stateName ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const states = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(sta.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(sta.stateName AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .getRawMany()
 
       return ok({ count: states.length })

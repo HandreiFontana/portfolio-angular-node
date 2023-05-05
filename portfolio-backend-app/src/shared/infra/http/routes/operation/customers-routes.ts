@@ -23,7 +23,7 @@ const deleteCustomerController = new DeleteCustomerController()
 const multiDeleteCustomerController = new MultiDeleteCustomerController()
 
 customersRoutes.post('/', ensureAuthenticated, createCustomerController.handle )
-customersRoutes.get('/', ensureAuthenticated, listCustomerController.handle)
+customersRoutes.post('/list', ensureAuthenticated, listCustomerController.handle)
 customersRoutes.post('/count', ensureAuthenticated, countCustomerController.handle)
 customersRoutes.get('/select/:id', ensureAuthenticated, idSelectCustomerController.handle)
 customersRoutes.get('/select', ensureAuthenticated, selectCustomerController.handle)

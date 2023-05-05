@@ -8,8 +8,9 @@ class ListProfileController {
       search,
       page,
       pageSize,
-      order
-    } = request.query
+      order,
+      filter
+    } = request.body
 
     const listProfileUseCase = container.resolve(ListProfileUseCase)
 
@@ -17,7 +18,8 @@ class ListProfileController {
       search: search as string,
       page: Number(page) as number,
       rowsPerPage: Number(pageSize) as number,
-      order: order as string
+      order: order as string,
+      filter: filter as string
     })
 
     return response.json(profiles)

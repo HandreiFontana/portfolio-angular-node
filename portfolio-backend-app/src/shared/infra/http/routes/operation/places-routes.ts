@@ -23,7 +23,7 @@ const deletePlaceController = new DeletePlaceController()
 const multiDeletePlaceController = new MultiDeletePlaceController()
 
 placesRoutes.post('/', ensureAuthenticated, createPlaceController.handle )
-placesRoutes.get('/', ensureAuthenticated, listPlaceController.handle)
+placesRoutes.post('/list', ensureAuthenticated, listPlaceController.handle)
 placesRoutes.post('/count', ensureAuthenticated, countPlaceController.handle)
 placesRoutes.get('/select/:id', ensureAuthenticated, idSelectPlaceController.handle)
 placesRoutes.get('/select', ensureAuthenticated, selectPlaceController.handle)

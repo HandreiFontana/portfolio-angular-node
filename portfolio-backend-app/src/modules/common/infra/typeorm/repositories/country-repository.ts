@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm'
+import { Brackets, getRepository, Repository } from 'typeorm'
 import { ICountryDTO } from '@modules/common/dtos/i-country-dto'
 import { ICountryRepository } from '@modules/common/repositories/i-country-repository'
 import { Country } from '@modules/common/infra/typeorm/entities/country'
@@ -40,7 +40,8 @@ class CountryRepository implements ICountryRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -66,19 +67,28 @@ class CountryRepository implements ICountryRepository {
     const offset = rowsPerPage * page
 
     try {
-      let countries = await this.repository.createQueryBuilder('cou')
+      let query = this.repository.createQueryBuilder('cou')
         .select([
           'cou.id as "id"',
           'cou.countryName as "countryName"',
           'cou.countryCode as "countryCode"',
         ])
-        .where('CAST(cou.countryName AS VARCHAR) ilike :search', { search: `%${search}%` })
-        .orWhere('CAST(cou.countryCode AS VARCHAR) ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const countries = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(cou.countryName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cou.countryCode AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .addOrderBy('cou.countryName', columnOrder[0])
         .addOrderBy('cou.countryCode', columnOrder[1])
-        .take(rowsPerPage)
-        .skip(offset)
+        .offset(offset)
         .limit(rowsPerPage)
+        .take(rowsPerPage)
         .getRawMany()
 
       return ok(countries)
@@ -128,14 +138,24 @@ class CountryRepository implements ICountryRepository {
   // count
   async count (
     search: string,
+    filter: string
   ): Promise<HttpResponse> {
     try {
-      const countries = await this.repository.createQueryBuilder('cou')
+      let query = this.repository.createQueryBuilder('cou')
         .select([
           'cou.id as "id"',
         ])
-        .where('cou.countryName ilike :search', { search: `%${search}%` })
-        .orWhere('cou.countryCode ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const countries = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(cou.countryName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cou.countryCode AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .getRawMany()
 
       return ok({ count: countries.length })

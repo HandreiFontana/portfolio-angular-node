@@ -26,6 +26,8 @@ import { IProfileOptionRepository } from '@modules/security/repositories/i-profi
 import { ProfileOptionRepository } from '@modules/security/infra/typeorm/repositories/profile-option-repository'
 import { IConfigRepository } from '@modules/security/repositories/i-config-repository'
 import { ConfigRepository } from '@modules/security/infra/typeorm/repositories/config-repository'
+import { IFilterRepository } from '@modules/security/repositories/i-filter-repository'
+import { FilterRepository } from '@modules/security/infra/typeorm/repositories/filter-repository'
 import { ICountryRepository } from '@modules/common/repositories/i-country-repository'
 import { CountryRepository } from '@modules/common/infra/typeorm/repositories/country-repository'
 import { IStateRepository } from '@modules/common/repositories/i-state-repository'
@@ -49,6 +51,7 @@ container.registerSingleton<INavigationRepository>('NavigationRepository', Navig
 container.registerSingleton<IUserProfileRepository>('UserProfileRepository', UserProfileRepository)
 container.registerSingleton<IProfileOptionRepository>('ProfileOptionRepository', ProfileOptionRepository)
 container.registerSingleton<IConfigRepository>('ConfigRepository', ConfigRepository)
+container.registerSingleton<IFilterRepository>('FilterRepository', FilterRepository)
 container.registerSingleton<ICountryRepository>('CountryRepository', CountryRepository)
 container.registerSingleton<IStateRepository>('StateRepository', StateRepository)
 container.registerSingleton<ICityRepository>('CityRepository', CityRepository)

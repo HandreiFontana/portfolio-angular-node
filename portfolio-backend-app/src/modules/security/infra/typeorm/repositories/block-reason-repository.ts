@@ -46,7 +46,8 @@ class BlockReasonRepository implements IBlockReasonRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -141,6 +142,7 @@ class BlockReasonRepository implements IBlockReasonRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const blockReasons = await this.repository.createQueryBuilder('blo')

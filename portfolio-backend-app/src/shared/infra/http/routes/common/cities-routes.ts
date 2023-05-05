@@ -23,7 +23,7 @@ const deleteCityController = new DeleteCityController()
 const multiDeleteCityController = new MultiDeleteCityController()
 
 citiesRoutes.post('/', ensureAuthenticated, createCityController.handle )
-citiesRoutes.get('/', ensureAuthenticated, listCityController.handle)
+citiesRoutes.post('/list', ensureAuthenticated, listCityController.handle)
 citiesRoutes.post('/count', ensureAuthenticated, countCityController.handle)
 citiesRoutes.get('/select/:id', ensureAuthenticated, idSelectCityController.handle)
 citiesRoutes.get('/select', ensureAuthenticated, selectCityController.handle)

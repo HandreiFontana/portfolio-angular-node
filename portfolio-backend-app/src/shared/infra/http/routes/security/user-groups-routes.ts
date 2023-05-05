@@ -23,7 +23,7 @@ const deleteUserGroupController = new DeleteUserGroupController()
 const multiDeleteUserGroupController = new MultiDeleteUserGroupController()
 
 userGroupsRoutes.post('/', ensureAuthenticated, createUserGroupController.handle )
-userGroupsRoutes.get('/', ensureAuthenticated, listUserGroupController.handle)
+userGroupsRoutes.post('/list', ensureAuthenticated, listUserGroupController.handle)
 userGroupsRoutes.post('/count', ensureAuthenticated, countUserGroupController.handle)
 userGroupsRoutes.get('/select/:id', ensureAuthenticated, idSelectUserGroupController.handle)
 userGroupsRoutes.get('/select', ensureAuthenticated, selectUserGroupController.handle)

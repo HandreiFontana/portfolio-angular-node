@@ -40,7 +40,8 @@ class ModuleRepository implements IModuleRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -131,6 +132,7 @@ class ModuleRepository implements IModuleRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const modules = await this.repository.createQueryBuilder('mod')

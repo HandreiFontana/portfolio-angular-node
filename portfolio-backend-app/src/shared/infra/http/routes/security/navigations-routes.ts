@@ -23,7 +23,7 @@ const deleteNavigationController = new DeleteNavigationController()
 const multiDeleteNavigationController = new MultiDeleteNavigationController()
 
 navigationsRoutes.post('/', ensureAuthenticated, createNavigationController.handle )
-navigationsRoutes.get('/', ensureAuthenticated, listNavigationController.handle)
+navigationsRoutes.post('/list', ensureAuthenticated, listNavigationController.handle)
 navigationsRoutes.post('/count', ensureAuthenticated, countNavigationController.handle)
 navigationsRoutes.get('/select/:id', ensureAuthenticated, idSelectNavigationController.handle)
 navigationsRoutes.get('/select', ensureAuthenticated, selectNavigationController.handle)

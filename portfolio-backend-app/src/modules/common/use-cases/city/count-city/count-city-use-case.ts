@@ -5,6 +5,7 @@ import { HttpResponse } from '@shared/helpers'
 
 interface IRequest {
   search: string,
+  filter?: string
 }
 
 @injectable()
@@ -15,10 +16,12 @@ class CountCityUseCase {
   ) {}
 
   async execute({
-    search
+    search,
+    filter
   }: IRequest): Promise<HttpResponse> {
     const citiesCount = await this.cityRepository.count(
-      search
+      search,
+      filter
     )
 
     return citiesCount

@@ -104,6 +104,20 @@
     }
   }
 
+  .po-table-remove-show-more {
+    .po-button {
+      display: none;
+    }
+    .po-table-footer-show-more {
+      display: none;
+    }
+    .po-table-container {
+      border: 1px solid #b6bdbf;
+      border-radius: 1px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+    }
+  }
+
   .po-page-background-wrap .po-page-login-panel {
     display: block;
     height: 100%;

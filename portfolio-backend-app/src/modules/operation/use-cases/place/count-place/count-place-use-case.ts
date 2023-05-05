@@ -5,6 +5,7 @@ import { HttpResponse } from '@shared/helpers'
 
 interface IRequest {
   search: string,
+  filter?: string
 }
 
 @injectable()
@@ -15,10 +16,12 @@ class CountPlaceUseCase {
   ) {}
 
   async execute({
-    search
+    search,
+    filter
   }: IRequest): Promise<HttpResponse> {
     const placesCount = await this.placeRepository.count(
-      search
+      search,
+      filter
     )
 
     return placesCount

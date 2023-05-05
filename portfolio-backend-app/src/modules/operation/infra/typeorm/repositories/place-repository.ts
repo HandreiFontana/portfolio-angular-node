@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm'
+import { Brackets, getRepository, Repository } from 'typeorm'
 import { IPlaceDTO } from '@modules/operation/dtos/i-place-dto'
 import { IPlaceRepository } from '@modules/operation/repositories/i-place-repository'
 import { Place } from '@modules/operation/infra/typeorm/entities/place'
@@ -48,7 +48,8 @@ class PlaceRepository implements IPlaceRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -77,7 +78,7 @@ class PlaceRepository implements IPlaceRepository {
     const offset = rowsPerPage * page
 
     try {
-      let places = await this.repository.createQueryBuilder('pla')
+      let query = this.repository.createQueryBuilder('pla')
         .select([
           'pla.id as "id"',
           'pla.placeName as "placeName"',
@@ -92,16 +93,25 @@ class PlaceRepository implements IPlaceRepository {
         .leftJoin('pla.customerId', 'a')
         .leftJoin('pla.stateId', 'b')
         .leftJoin('pla.cityId', 'c')
-        .where('CAST(pla.placeName AS VARCHAR) ilike :search', { search: `%${search}%` })
-        .orWhere('CAST(pla.size AS VARCHAR) ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const places = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(pla.placeName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(pla.size AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .addOrderBy('pla.placeName', columnOrder[0])
         .addOrderBy('a.customerName', columnOrder[1])
         .addOrderBy('b.federativeUnit', columnOrder[2])
         .addOrderBy('c.cityName', columnOrder[3])
         .addOrderBy('pla.size', columnOrder[4])
-        .take(rowsPerPage)
-        .skip(offset)
+        .offset(offset)
         .limit(rowsPerPage)
+        .take(rowsPerPage)
         .getRawMany()
 
       return ok(places)
@@ -151,17 +161,27 @@ class PlaceRepository implements IPlaceRepository {
   // count
   async count (
     search: string,
+    filter: string
   ): Promise<HttpResponse> {
     try {
-      const places = await this.repository.createQueryBuilder('pla')
+      let query = this.repository.createQueryBuilder('pla')
         .select([
           'pla.id as "id"',
         ])
         .leftJoin('pla.customerId', 'a')
         .leftJoin('pla.stateId', 'b')
         .leftJoin('pla.cityId', 'c')
-        .where('pla.placeName ilike :search', { search: `%${search}%` })
-        .orWhere('pla.size ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const places = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(pla.placeName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(pla.size AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .getRawMany()
 
       return ok({ count: places.length })

@@ -83,7 +83,8 @@ class ProfileRepository implements IProfileRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -180,6 +181,7 @@ class ProfileRepository implements IProfileRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const profiles = await this.repository.createQueryBuilder('pro')

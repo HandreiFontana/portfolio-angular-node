@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm'
+import { Brackets, getRepository, Repository } from 'typeorm'
 import { ICustomerDTO } from '@modules/operation/dtos/i-customer-dto'
 import { ICustomerRepository } from '@modules/operation/repositories/i-customer-repository'
 import { Customer } from '@modules/operation/infra/typeorm/entities/customer'
@@ -50,7 +50,8 @@ class CustomerRepository implements ICustomerRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -79,7 +80,7 @@ class CustomerRepository implements ICustomerRepository {
     const offset = rowsPerPage * page
 
     try {
-      let customers = await this.repository.createQueryBuilder('cus')
+      let query = this.repository.createQueryBuilder('cus')
         .select([
           'cus.id as "id"',
           'cus.customerName as "customerName"',
@@ -94,16 +95,25 @@ class CustomerRepository implements ICustomerRepository {
         .leftJoin('cus.countryId', 'a')
         .leftJoin('cus.stateId', 'b')
         .leftJoin('cus.cityId', 'c')
-        .where('CAST(cus.customerName AS VARCHAR) ilike :search', { search: `%${search}%` })
-        .orWhere('CAST(cus.email AS VARCHAR) ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const customers = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(cus.customerName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cus.email AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .addOrderBy('cus.customerName', columnOrder[0])
         .addOrderBy('cus.email', columnOrder[1])
         .addOrderBy('a.countryName', columnOrder[2])
         .addOrderBy('b.federativeUnit', columnOrder[3])
         .addOrderBy('c.cityName', columnOrder[4])
-        .take(rowsPerPage)
-        .skip(offset)
+        .offset(offset)
         .limit(rowsPerPage)
+        .take(rowsPerPage)
         .getRawMany()
 
       return ok(customers)
@@ -153,17 +163,27 @@ class CustomerRepository implements ICustomerRepository {
   // count
   async count (
     search: string,
+    filter: string
   ): Promise<HttpResponse> {
     try {
-      const customers = await this.repository.createQueryBuilder('cus')
+      let query = this.repository.createQueryBuilder('cus')
         .select([
           'cus.id as "id"',
         ])
         .leftJoin('cus.countryId', 'a')
         .leftJoin('cus.stateId', 'b')
         .leftJoin('cus.cityId', 'c')
-        .where('cus.customerName ilike :search', { search: `%${search}%` })
-        .orWhere('cus.email ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const customers = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(cus.customerName AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cus.email AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .getRawMany()
 
       return ok({ count: customers.length })

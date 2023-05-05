@@ -58,7 +58,8 @@ class UserRepository implements IUserRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -159,6 +160,7 @@ class UserRepository implements IUserRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const users = await this.repository.createQueryBuilder('use')

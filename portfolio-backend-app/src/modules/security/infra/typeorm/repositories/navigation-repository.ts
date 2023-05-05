@@ -42,7 +42,8 @@ class NavigationRepository implements INavigationRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -143,6 +144,7 @@ class NavigationRepository implements INavigationRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const navigations = await this.repository.createQueryBuilder('nav')

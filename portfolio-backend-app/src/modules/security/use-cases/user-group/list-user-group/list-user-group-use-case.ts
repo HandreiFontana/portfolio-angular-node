@@ -6,7 +6,8 @@ interface IRequest {
   search: string,
   page: number,
   rowsPerPage: number,
-  order: string
+  order: string,
+  filter?: string
 }
 
 interface ResponseProps {
@@ -25,7 +26,8 @@ class ListUserGroupUseCase {
     search = '',
     page = 0,
     rowsPerPage = 50,
-    order = ''
+    order = '',
+    filter
   }: IRequest): Promise<ResponseProps> {
     const newPage = page - 1
 
@@ -33,11 +35,13 @@ class ListUserGroupUseCase {
       search,
       newPage,
       rowsPerPage,
-      order
+      order,
+      filter
     )
 
     const countUserGroups = await this.userGroupRepository.count(
-      search
+      search,
+      filter
     )
 
     const numeroUserGroup = page * rowsPerPage

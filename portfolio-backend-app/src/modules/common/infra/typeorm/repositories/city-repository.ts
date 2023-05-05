@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm'
+import { Brackets, getRepository, Repository } from 'typeorm'
 import { ICityDTO } from '@modules/common/dtos/i-city-dto'
 import { ICityRepository } from '@modules/common/repositories/i-city-repository'
 import { City } from '@modules/common/infra/typeorm/entities/city'
@@ -42,7 +42,8 @@ class CityRepository implements ICityRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -68,7 +69,7 @@ class CityRepository implements ICityRepository {
     const offset = rowsPerPage * page
 
     try {
-      let cities = await this.repository.createQueryBuilder('cit')
+      let query = this.repository.createQueryBuilder('cit')
         .select([
           'cit.id as "id"',
           'a.id as "stateId"',
@@ -76,13 +77,22 @@ class CityRepository implements ICityRepository {
           'cit.cityName as "cityName"',
         ])
         .leftJoin('cit.stateId', 'a')
-        .where('CAST(a.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
-        .orWhere('CAST(cit.cityName AS VARCHAR) ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const cities = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(a.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cit.cityName AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .addOrderBy('a.federativeUnit', columnOrder[0])
         .addOrderBy('cit.cityName', columnOrder[1])
-        .take(rowsPerPage)
-        .skip(offset)
+        .offset(offset)
         .limit(rowsPerPage)
+        .take(rowsPerPage)
         .getRawMany()
 
       return ok(cities)
@@ -133,15 +143,25 @@ class CityRepository implements ICityRepository {
   // count
   async count (
     search: string,
+    filter: string
   ): Promise<HttpResponse> {
     try {
-      const cities = await this.repository.createQueryBuilder('cit')
+      let query = this.repository.createQueryBuilder('cit')
         .select([
           'cit.id as "id"',
         ])
         .leftJoin('cit.stateId', 'a')
-        .where('a.federativeUnit ilike :search', { search: `%${search}%` })
-        .orWhere('cit.cityName ilike :search', { search: `%${search}%` })
+
+      if (filter) {
+        query = query
+          .where(filter)
+      }
+
+      const cities = await query
+        .andWhere(new Brackets(query => {
+          query.andWhere('CAST(a.federativeUnit AS VARCHAR) ilike :search', { search: `%${search}%` })
+          query.orWhere('CAST(cit.cityName AS VARCHAR) ilike :search', { search: `%${search}%` })
+        }))
         .getRawMany()
 
       return ok({ count: cities.length })

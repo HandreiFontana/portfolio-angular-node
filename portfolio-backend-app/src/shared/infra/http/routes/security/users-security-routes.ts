@@ -25,7 +25,7 @@ const deleteUserController = new DeleteUserController()
 const multiDeleteUserController = new MultiDeleteUserController()
 
 usersSecurityRoutes.post('/', ensureAuthenticated, createUserController.handle )
-usersSecurityRoutes.get('/', ensureAuthenticated, listUserController.handle)
+usersSecurityRoutes.post('/list', ensureAuthenticated, listUserController.handle)
 usersSecurityRoutes.post('/count', ensureAuthenticated, countUserController.handle)
 usersSecurityRoutes.get('/select/:id', ensureAuthenticated, idSelectUserController.handle)
 usersSecurityRoutes.get('/select', ensureAuthenticated, selectUserController.handle)

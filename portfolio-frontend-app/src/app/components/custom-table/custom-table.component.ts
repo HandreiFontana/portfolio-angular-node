@@ -1,13 +1,15 @@
 import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { PermService } from 'src/app/services/perm.service'
+import { HttpClient } from '@angular/common/http'
 import { PoDialogService, PoNotificationService, PoPageAction, PoPageFilter, PoTableComponent } from '@po-ui/ng-components'
-import { AuthService } from 'src/app/services/auth.service'
 import { Subscription } from 'rxjs'
 import { finalize, map, tap } from 'rxjs/operators'
-import { HttpClient } from '@angular/common/http'
-import { RestService } from 'src/app/services/rest.service'
+import { FilterModalComponent } from 'src/app/components/filter-modal/filter-modal.component'
+import { ISavedFilter } from 'src/app/components/filter-modal/saved-filter/saved-filter.component'
 import { LanguagesService } from 'src/app/services/languages.service'
+import { AuthService } from 'src/app/services/auth.service'
+import { RestService } from 'src/app/services/rest.service'
+import { PermService } from 'src/app/services/perm.service'
 import { environment } from 'src/environments/environment'
 
 interface ICustomPageAction {
@@ -29,6 +31,7 @@ interface IRoute {
   page: number
   pageSize: number
   search?: string
+  filter?: string
 }
 
 @Component({
@@ -38,6 +41,7 @@ interface IRoute {
 })
 export class CustomTableComponent implements OnInit, OnDestroy {
   @ViewChild(PoTableComponent) table: PoTableComponent
+  @ViewChild(FilterModalComponent, { static: true }) filterModal: FilterModalComponent
   public literals: any = {}
   public listLiterals: any = {}
   public fields: Array<any> = []
@@ -56,6 +60,9 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     placeholder: '',
     width: 4
   }
+  public filterExpression: string
+  public savedFilters: ISavedFilter[] = []
+  public filterSelected: string
   
   @Input() pageTitle: string
   @Input() route: string
@@ -66,6 +73,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
   @Input() initialFields: any[] = []
   @Input() customPageActions?: ICustomPageAction[]
   @Input() canSeeAllActions?: boolean = false
+  @Input() filterItems?: string[]
 
   private subscriptions = new Subscription()
 
@@ -92,7 +100,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
           const routerPreferences = this.authService.routeTablePreferences(this.route + this.activatedRoute.snapshot.routeConfig.path)
           if (routerPreferences) this.fields = routerPreferences.preferences
           else this.restoreColumn()
-      
+
           this.subscriptions.add(this.getData())
         }
       })
@@ -114,38 +122,45 @@ export class CustomTableComponent implements OnInit, OnDestroy {
       })
   }
 
-  getRoute({ page, pageSize, search }: IRoute): string {
-    let route = `${environment.baseUrl}/${this.customRoute ?? this.route}?page=${page}&pageSize=${pageSize}`
+  getRoute(): string {
+    return `${environment.baseUrl}/${this.customRoute ?? this.route}/list`
+  }
 
-    if (search) route += `&search=${search}`
-
-    if (this.customParams) {
-      this.customParams.map(customParam => route += `&${customParam.param}=${customParam.value}`)
+  getPayload({ page, pageSize, search, filter }: IRoute) {
+    const payload = {
+      search,
+      page,
+      pageSize,
+      filter
     }
 
-    return route
+    if (this.customParams) {
+      this.customParams.map(customParam => payload[customParam.param] = customParam.value)
+    }
+
+    return payload
   }
 
   getData() {
     this.initialLoading = true
-    this.httpClient.get(this.getRoute({ page: 1, pageSize: 50 }))
-    .pipe(
-      tap(() => this.initialLoading = false),
-      finalize(() => {
-        this.loading = false
-        this.getActions()      
-    }))
-    .subscribe({
-      next: (response: ListResponse) => {
-        this.items = response.items
-        this.hasNext = response.hasNext
+    this.httpClient.post(this.getRoute(), this.getPayload({ page: 1, pageSize: 50 }))
+      .pipe(
+        tap(() => this.initialLoading = false),
+        finalize(() => {
+          this.loading = false
+          this.getActions()
+        }))
+      .subscribe({
+        next: (response: ListResponse) => {
+          this.items = response.items
+          this.hasNext = response.hasNext
 
-        setTimeout(() => {
-          this.calculateListHeight(response.items)
-        })
-      },
-      error: (error) => console.log(error)
-    })
+          setTimeout(() => {
+            this.calculateListHeight()
+          })
+        },
+        error: (error) => console.log(error)
+      })
   }
 
   getActions() {
@@ -191,6 +206,7 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     }
 
     this.getCustomActions()
+    this.getAdvancedSearch()
   }
 
   getCustomActions () {
@@ -201,21 +217,33 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  private getAdvancedSearch() {
+    if (this.filterItems) this.filterSettings.advancedAction = this.openAdvancedSearchModal.bind(this)
+  }
+
+
   // Funções básicas da tabela
 
-  search(search: string) {
+  search(search?: string) {
     this.filter = search
     this.page = 1
     this.loading = true
     this.subscriptions.add(
       this.httpClient
-        .get(this.getRoute({ page: 1, pageSize: this.pageSize, search }))
-        .pipe(finalize(() => this.loading = false))
+        .post(this.getRoute(), this.getPayload({ page: 1, pageSize: this.pageSize, search, filter: this.filterExpression }))
+        .pipe(finalize(() => {
+          this.loading = false
+          this.calculateListHeight()
+        }))
         .subscribe({
           next: (response: ListResponse) => this.items = response.items,
-          error: (error) => console.log(error)
+          error: () => this.items = []
         })
     )
+  }
+
+  openAdvancedSearchModal() {
+    this.filterModal.openModal()
   }
 
   getSelectedItemsKeys() {
@@ -316,6 +344,8 @@ export class CustomTableComponent implements OnInit, OnDestroy {
 
   updateItems() {
     this.page = 1
+    this.filterExpression = null
+    this.filterSelected = null
     this.getData()
   }
 
@@ -323,14 +353,14 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     if (this.hasNext) {
       this.loading = true
       this.subscriptions.add(
-        this.httpClient.get(this.getRoute({ page: this.page += 1, pageSize: this.pageSize, search: this.filter }))
+        this.httpClient.post(this.getRoute(), this.getPayload({ page: this.page += 1, pageSize: this.pageSize, search: this.filter, filter: this.filterExpression }))
           .pipe(finalize(() => this.loading = false))
           .subscribe({
             next: (response: ListResponse) => {
               this.items = this.items.concat(response.items)
               this.hasNext = response.hasNext
             },
-            error: (error) => console.log(error)
+            error: () => this.items = []
           })
       )
     }
@@ -340,26 +370,37 @@ export class CustomTableComponent implements OnInit, OnDestroy {
     this.authService.browseTablePreferences(this.activatedRoute.snapshot.routeConfig.path, this.table.columns)
   }
 
+  submitFilter(expression: string) {
+    this.filterExpression = expression === '' ? null : expression
+    this.search()
+  }
+
+  changeFilter(filterId: string) {
+    const filter = this.filterModal.savedFilter.savedFilters.find(savedFilter => savedFilter.value === filterId)
+    this.submitFilter(filter.expression)
+  }
+
+  removeFilterExpression() {
+    this.filterExpression = null
+    this.filterSelected = null
+    this.search()
+  }
+
   restoreColumn() {
     this.fields = this.initialFields
   }
 
-  calculateListHeight(items?: ListResponse[]) {
-    let listHeight = 0
+  calculateListHeight() {
+    const headerHeight = window.innerWidth > 1366 ? 48 : 40
+    const headerPageHeight = window.innerWidth > 1366 ? 132.45 : 106.55
+    const paddings = 32
+    const filter = 84
 
-    if (this.table) {
-      if (items) {
-        listHeight = (this.table.itemSize + 1) * (items.length + 1)
-      } else {
-        listHeight = (this.table.itemSize + 1) * (this.table.items.length + 1)
-      }
-  
-      if (listHeight < window.innerHeight - 230) {
-        this.listHeight = 0
-      } else {
-        this.listHeight = window.innerHeight - 230
-      }
-    }
+    let reduceHeight = headerHeight + headerPageHeight + paddings
+
+    if (this.filterItems) reduceHeight += filter
+
+    this.listHeight = window.innerHeight - reduceHeight
   }
 
   @HostListener("window:resize", ["$event"])

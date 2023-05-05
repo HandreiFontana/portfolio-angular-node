@@ -13,6 +13,7 @@ import { profileOptionsRoutes } from './security/profile-options-routes'
 import { usersProfilesRoutes } from './security/users-profiles-routes'
 import { navigationsRoutes } from './security/navigations-routes'
 import { configsRoutes } from './security/configs-routes'
+import { filtersRoutes } from './security/filters-routes'
 import { countriesRoutes } from './common/countries-routes'
 import { statesRoutes } from './common/states-routes'
 import { citiesRoutes } from './common/cities-routes'
@@ -35,6 +36,7 @@ router.use('/profile-options', profileOptionsRoutes)
 router.use('/users-profiles', usersProfilesRoutes)
 router.use('/navigations', navigationsRoutes)
 router.use('/configs', configsRoutes)
+router.use('/filters', filtersRoutes)
 router.use('/countries', countriesRoutes)
 router.use('/states', statesRoutes)
 router.use('/cities', citiesRoutes)

@@ -23,7 +23,7 @@ const deleteBlockReasonController = new DeleteBlockReasonController()
 const multiDeleteBlockReasonController = new MultiDeleteBlockReasonController()
 
 blockReasonsRoutes.post('/', ensureAuthenticated, createBlockReasonController.handle )
-blockReasonsRoutes.get('/', ensureAuthenticated, listBlockReasonController.handle)
+blockReasonsRoutes.post('/list', ensureAuthenticated, listBlockReasonController.handle)
 blockReasonsRoutes.post('/count', ensureAuthenticated, countBlockReasonController.handle)
 blockReasonsRoutes.get('/select/:id', ensureAuthenticated, idSelectBlockReasonController.handle)
 blockReasonsRoutes.get('/select', ensureAuthenticated, selectBlockReasonController.handle)

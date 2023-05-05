@@ -25,7 +25,7 @@ const deleteMenuOptionController = new DeleteMenuOptionController()
 const multiDeleteMenuOptionController = new MultiDeleteMenuOptionController()
 
 menuOptionsRoutes.post('/', ensureAuthenticated, createMenuOptionController.handle )
-menuOptionsRoutes.get('/', ensureAuthenticated, listMenuOptionController.handle)
+menuOptionsRoutes.post('/list', ensureAuthenticated, listMenuOptionController.handle)
 menuOptionsRoutes.post('/all', ensureAuthenticated, allMenuOptionController.handle)
 menuOptionsRoutes.post('/count', ensureAuthenticated, countMenuOptionController.handle)
 menuOptionsRoutes.get('/select/:id', ensureAuthenticated, idSelectMenuOptionController.handle)

@@ -23,7 +23,7 @@ const deleteUserProfileController = new DeleteUserProfileController()
 const multiDeleteUserProfileController = new MultiDeleteUserProfileController()
 
 usersProfilesRoutes.post('/', ensureAuthenticated, createUserProfileController.handle )
-usersProfilesRoutes.get('/', ensureAuthenticated, listUserProfileController.handle)
+usersProfilesRoutes.post('/list', ensureAuthenticated, listUserProfileController.handle)
 usersProfilesRoutes.post('/count', ensureAuthenticated, countUserProfileController.handle)
 usersProfilesRoutes.get('/select/:id', ensureAuthenticated, idSelectUserProfileController.handle)
 usersProfilesRoutes.get('/select', ensureAuthenticated, selectUserProfileController.handle)

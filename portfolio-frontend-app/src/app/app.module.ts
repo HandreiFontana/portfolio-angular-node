@@ -9,6 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { DefaultComponent } from "./_layouts/default/default.component"
 import { CustomTableComponent } from './components/custom-table/custom-table.component';
 import { NoDataComponent } from './components/no-data/no-data.component'
+import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
+import { SavedFilterComponent } from './components/filter-modal/saved-filter/saved-filter.component'
 import { AppRoutingModule } from "./app-routing.module"
 import { AppComponent } from "./app.component"
 import { HomeComponent } from "./pages/authentication/home/home.component"
@@ -56,6 +58,8 @@ import { i18nConfig } from './shared/i18n'
     AppComponent,
     CustomTableComponent,
     NoDataComponent,
+    FilterModalComponent,
+    SavedFilterComponent,
     LoginComponent,
     ResetPasswordComponent,
     BlockReasonEditComponent,

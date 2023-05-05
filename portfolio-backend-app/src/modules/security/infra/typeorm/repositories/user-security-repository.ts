@@ -144,7 +144,8 @@ class UserSecurityRepository implements IUserSecurityRepository {
     search: string,
     page: number,
     rowsPerPage: number,
-    order: string
+    order: string,
+    filter?: string
   ): Promise<HttpResponse> {
     let columnName: string
     let columnDirection: 'ASC' | 'DESC'
@@ -271,6 +272,7 @@ class UserSecurityRepository implements IUserSecurityRepository {
   // count
   async count (
     search: string,
+    filter?: string
   ): Promise<HttpResponse> {
     try {
       const users = await this.repository.createQueryBuilder('use')
@@ -429,9 +431,7 @@ class UserSecurityRepository implements IUserSecurityRepository {
 
     if (userById) {
       userById.tfa = data
-      
-      if (!data) userById.tfa = null
-      if (data && data.secret !== '') userById.mustActiveTwoFactorAuthentication = false
+      if (data.secret !== '') userById.mustActiveTwoFactorAuthentication = false
 
       await this.repository.save(userById)
     }
