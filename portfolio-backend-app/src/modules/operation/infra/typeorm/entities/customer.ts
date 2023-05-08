@@ -31,8 +31,8 @@ class Customer {
   @JoinColumn({ name: 'city_id', referencedColumnName: 'id' })
   cityId?: string
 
-  @Column({ name: 'address', nullable: true })
-  address?: string
+  @Column({ name: 'address', nullable: true, type: 'json' })
+  address?: JSON
 
   @CreateDateColumn({ name: 'created_at', nullable: true })
   createdAt?: Date

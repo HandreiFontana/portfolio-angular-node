@@ -5,7 +5,7 @@ interface IPlaceDTO {
   stateId?: string
   cityId?: string
   size?: string
-  address?: string
+  address?: JSON
   createdAt?: Date
   updatedAt?: Date
 }

@@ -28,8 +28,8 @@ class Place {
   @Column({ name: 'size', nullable: true })
   size?: string
 
-  @Column({ name: 'address', nullable: true })
-  address?: string
+  @Column({ name: 'address', nullable: true, type: 'json' })
+  address?: JSON
 
   @CreateDateColumn({ name: 'created_at', nullable: true })
   createdAt?: Date

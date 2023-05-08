@@ -43,7 +43,7 @@ export class CreateCustomer1683119351006 implements MigrationInterface {
           },
           {
             name: 'address',
-            type: 'varchar',
+            type: 'json',
             isNullable: true,
           },
           {

@@ -38,7 +38,7 @@ export class CreatePlace1683119351008 implements MigrationInterface {
           },
           {
             name: 'address',
-            type: 'varchar',
+            type: 'json',
             isNullable: true,
           },
           {

@@ -6,7 +6,7 @@ interface ICustomerDTO {
   countryId?: string
   stateId?: string
   cityId?: string
-  address?: string
+  address?: JSON
   createdAt?: Date
   updatedAt?: Date
 }
