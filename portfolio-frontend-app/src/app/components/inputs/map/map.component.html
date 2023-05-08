@@ -1,11 +1,17 @@
 <div>
-  <div>
-    <div class="po-field-title">{{ label ?? '' }}</div>
-  </div>
+  <div class="po-field-title">{{ label ?? '' }}</div>
 
   <div class="map-frame">
     <div class="remove-polygon" (click)="polygonRemove()" *ngIf="!isDisabled && value?.length > 2">
       <span class="fa-solid fa-xmark remove-polygon-icon"> </span>
+    </div>
+
+    <div class="tile-select">
+      <po-select
+        [(ngModel)]="defaultTileLayer"
+        (p-change)="addTileLayer($event)"
+        [p-options]="tileLayers"
+      > </po-select>
     </div>
 
     <div id="map"> </div>

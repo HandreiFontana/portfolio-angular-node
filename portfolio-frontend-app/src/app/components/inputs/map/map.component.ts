@@ -5,6 +5,12 @@ import 'leaflet-draw'
 
 declare let L: any
 
+interface ICustomTileLayers {
+  label: string
+  value: string
+  tileLayer: TileLayer
+}
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -23,13 +29,13 @@ export class MapComponent implements OnInit, ControlValueAccessor {
   private marker: Marker
   private polygon: Polygon
 
-  private tileLayers: TileLayer[] = [
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
-    })
+  public tileLayers: ICustomTileLayers[] = [
+    { label: 'Rua', value: 'street', tileLayer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 20 }) },
+    { label: 'Híbrido', value: 'hybrid', tileLayer: L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3'] }) },
+    { label: 'Satélite', value: 'sattelite', tileLayer: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { id: 'mapbox.streets' }) },
+    { label: 'Terreno', value: 'terrain', tileLayer: L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', { maxZoom: 20 }) }
   ]
-  private defaultTileLayer = this.tileLayers[0]
+  public defaultTileLayer = 'street'
 
   public value: any
   private onChange: Function
@@ -75,10 +81,12 @@ export class MapComponent implements OnInit, ControlValueAccessor {
     this.map.on('click', this.onMapClick.bind(this, this.dataType))
   }
 
-  private addTileLayer(layer?: TileLayer) {
+  public addTileLayer(layer?: TileLayer) {
     this.tileLayer?.remove()
+
+    const tileLayer = this.tileLayers.find(item => item.value === (layer ?? this.defaultTileLayer))
     
-    this.tileLayer = (layer ?? this.defaultTileLayer).addTo(this.map)
+    this.tileLayer = (tileLayer.tileLayer).addTo(this.map)
   }
 
   private centerMap(type: string, value: any) {
