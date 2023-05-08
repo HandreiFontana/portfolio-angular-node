@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, forwardRef } from '@angular/core'
+import { ControlValueAccessor, FormControlName, NG_VALUE_ACCESSOR } from '@angular/forms'
 import * as L from 'leaflet'
-import { Map, TileLayer } from 'leaflet'
+import { Map, Marker, Polygon, TileLayer } from 'leaflet'
 
 const defaultLayer: TileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
@@ -10,12 +11,25 @@ const defaultLayer: TileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+  styleUrls: ['./map.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MapComponent),
+      multi: true
+    }
+  ]
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, ControlValueAccessor {
   private map: Map
-  private tileLayer: TileLayer 
+  private tileLayer: TileLayer
+  private marker: Marker
+  private polygon: Polygon
 
+  public value: any
+  private onChange: Function
+
+  @Input() formControlName?: FormControlName
   @Input() label?: string
   @Input() dataType?: 'marker' | 'polygon'
 
@@ -23,6 +37,22 @@ export class MapComponent implements OnInit {
 
   ngOnInit(): void {
     this.mapInit()
+  }
+
+  // Input Functions
+
+  writeValue(value: any): void {
+    this.value = value
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn
+  }
+
+  registerOnTouched(fn: any): void {
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
   }
 
   // Map Init Functions
@@ -45,21 +75,45 @@ export class MapComponent implements OnInit {
 
   // Map Click Functions
 
-  private onMapClick(type?: string): void {
+  private onMapClick(type: string, event: any): void {
+    const { lat, lng } = event.latlng
+
     switch (type) {
       case 'marker':
-        this.markerAdd()
+        this.markerAdd(lat, lng)
+        break
       case 'polygon':
-        this.polygonAdd()
+        this.polygonAdd(lat, lng)
+        break
     }
   }
 
-  private markerAdd(): void {
+  private markerAdd(lat: number, lng: number): void {
+    this.marker?.remove()
+
+    this.value = [lat, lng]
+    this.onChange(this.value)
     
+    this.marker = L.marker(this.value).addTo(this.map)
   }
 
-  private polygonAdd(): void {
+  private polygonAdd(lat: number, lng: number): void {
+    this.value = this.value ? [...this.value, [lat, lng]] : [[lat, lng]]
 
+    if (this.value.length > 2) {
+      this.onChange(this.value)
+
+      this.polygon?.remove()
+
+      this.polygon = L.polygon(this.value).addTo(this.map)
+    }
+  }
+
+  public polygonRemove(): void {
+    this.polygon.remove()
+    this.polygon = null
+    this.value = null
+    this.onChange(this.value)
   }
 
 }

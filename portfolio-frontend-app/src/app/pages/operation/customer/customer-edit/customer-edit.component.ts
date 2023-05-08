@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { Component, OnDestroy, OnInit } from "@angular/core"
 import { ActivatedRoute, Router } from '@angular/router'
-import { PoDynamicFormField, PoPageAction, PoNotificationService, PoNotification } from '@po-ui/ng-components'
+import { PoPageAction, PoNotificationService } from '@po-ui/ng-components'
 import { FormBuilder } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { environment } from "src/environments/environment"
@@ -27,7 +27,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     countryId: null,
     stateId: null,
     cityId: null,
-    address: '',
+    address: null,
   })
 
   public readonly serviceApi = `${environment.baseUrl}/customers`

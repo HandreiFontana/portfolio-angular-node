@@ -4,6 +4,10 @@
   </div>
 
   <div class="map-frame">
+    <div class="remove-polygon" (click)="polygonRemove()" *ngIf="value?.length > 2">
+      <span class="fa-solid fa-xmark remove-polygon-icon"> </span>
+    </div>
+
     <div id="map"> </div>
   </div>
 </div>
