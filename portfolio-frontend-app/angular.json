@@ -33,14 +33,22 @@
                 "glob": "**/*",
                 "input": "node_modules/@po-ui/style/images",
                 "output": "assets/images"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets/"
               }
             ],
             "styles": [
               "node_modules/@totvs/po-theme/css/po-theme-default-variables.min.css",
               "node_modules/@totvs/po-theme/css/po-theme-default.min.css",
+              "./node_modules/leaflet/dist/leaflet.css",
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "./node_modules/leaflet/dist/leaflet.js"
+            ],
             "allowedCommonJsDependencies": ["uuid"]
           },
           "configurations": {
