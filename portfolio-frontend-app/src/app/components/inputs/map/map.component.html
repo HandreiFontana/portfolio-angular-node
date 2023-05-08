@@ -4,7 +4,7 @@
   </div>
 
   <div class="map-frame">
-    <div class="remove-polygon" (click)="polygonRemove()" *ngIf="value?.length > 2">
+    <div class="remove-polygon" (click)="polygonRemove()" *ngIf="!isDisabled && value?.length > 2">
       <span class="fa-solid fa-xmark remove-polygon-icon"> </span>
     </div>
 

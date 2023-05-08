@@ -91,6 +91,7 @@
       <app-map
         formControlName="address"
         dataType="marker"
+        [isDisabled]="readonly"
         [label]="this.literals.fields.form['address']"
       > </app-map>
     </div>
