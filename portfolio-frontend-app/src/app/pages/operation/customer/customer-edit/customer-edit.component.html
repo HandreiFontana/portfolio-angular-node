@@ -12,13 +12,14 @@
         p-clean
         [p-label]="this.literals.fields.form['customerName']"
         p-maxlength="100"
+        p-no-autocomplete
         [p-readonly]="readonly"
         p-required
       > </po-input>
     </div>
 
     <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
-      <po-input
+      <po-email
         class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
         formControlName="email"
         name="email"
@@ -27,7 +28,7 @@
         p-maxlength="100"
         [p-readonly]="readonly"
         p-required
-      > </po-input>
+      > </po-email>
     </div>
 
     <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
@@ -38,6 +39,7 @@
         p-clean
         [p-label]="this.literals.fields.form['phone']"
         p-maxlength="20"
+        p-pattern="^[0-9()-]+$"
         [p-readonly]="readonly"
         p-required
       > </po-input>
