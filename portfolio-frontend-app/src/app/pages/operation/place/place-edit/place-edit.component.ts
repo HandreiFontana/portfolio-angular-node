@@ -140,6 +140,12 @@ export class PlaceEditComponent implements OnInit, OnDestroy {
     this.cityIdService = `${environment.baseUrl}/cities/select?stateId=${event}`
   }
 
+  updateSize(event: number) {
+    this.placeForm.patchValue({
+      size: String(event)
+    })
+  }
+
   save(data, willCreateAnother?: boolean) {
     if (this.placeForm.valid) {
       if (this.id && this.getPageType(this.activatedRoute.snapshot.routeConfig.path) === 'edit') {

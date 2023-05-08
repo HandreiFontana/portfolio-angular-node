@@ -1,7 +1,9 @@
-import { Component, Input, OnInit, forwardRef } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core'
 import { ControlValueAccessor, FormControlName, NG_VALUE_ACCESSOR } from '@angular/forms'
-import * as L from 'leaflet'
 import { Map, Marker, Polygon, TileLayer } from 'leaflet'
+import 'leaflet-draw'
+
+declare let L: any
 
 @Component({
   selector: 'app-map',
@@ -36,6 +38,7 @@ export class MapComponent implements OnInit, ControlValueAccessor {
   @Input() label?: string
   @Input() isDisabled?: boolean = false
   @Input() dataType?: 'marker' | 'polygon'
+  @Output() changeSize = new EventEmitter<number>()
 
   constructor() { }
 
@@ -127,10 +130,16 @@ export class MapComponent implements OnInit, ControlValueAccessor {
 
   private polygonAddToMap(latlng: L.LatLngExpression[]) {
     this.onChange(latlng)
-
+    
     this.polygon?.remove()
-
+    
     this.polygon = L.polygon(latlng).addTo(this.map)
+    this.calculateSize(this.polygon.getLatLngs()[0])
+  }
+
+  private calculateSize(value?: any) {
+    const size = value ? L.GeometryUtil.geodesicArea(value) : 0
+    this.changeSize.emit(size)
   }
 
   public polygonRemove(): void {
@@ -138,6 +147,7 @@ export class MapComponent implements OnInit, ControlValueAccessor {
     this.polygon = null
     this.value = null
     this.onChange(this.value)
+    this.calculateSize(null)
   }
 
 }

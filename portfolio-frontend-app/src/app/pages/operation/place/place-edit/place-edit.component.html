@@ -55,27 +55,24 @@
 
     <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
       <po-input
-        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12"
         formControlName="size"
         name="size"
         p-clean
+        p-disabled
         [p-label]="this.literals.fields.form['size']"
         p-maxlength="100"
-        [p-readonly]="readonly"
-        p-required
       > </po-input>
     </div>
 
-    <div class="po-sm-12 po-md-12 po-lg-12 po-xl-12 no-padding">
-      <po-input
-        class="po-sm-12 po-md-12 po-lg-12 po-xl-12"
+    <div class="po-sm-12">
+      <app-map
         formControlName="address"
-        name="address"
-        p-clean
-        [p-label]="this.literals.fields.form['address']"
-        p-maxlength="4096"
-        [p-readonly]="readonly"
-      > </po-input>
+        (changeSize)="updateSize($event)"
+        dataType="polygon"
+        [isDisabled]="readonly"
+        [label]="this.literals.fields.form['address']"
+      > </app-map>
     </div>
 
   </form>
