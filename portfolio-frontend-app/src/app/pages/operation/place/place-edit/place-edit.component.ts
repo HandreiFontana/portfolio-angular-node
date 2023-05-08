@@ -1,12 +1,17 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, OnDestroy, OnInit } from "@angular/core"
+import { Component, OnDestroy, OnInit, ViewChild } from "@angular/core"
 import { ActivatedRoute, Router } from '@angular/router'
-import { PoDynamicFormField, PoPageAction, PoNotificationService, PoNotification } from '@po-ui/ng-components'
+import { PoPageAction, PoNotificationService, PoSelectOption } from '@po-ui/ng-components'
 import { FormBuilder } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { environment } from "src/environments/environment"
 import { RestService } from "src/app/services/rest.service"
 import { LanguagesService } from 'src/app/services/languages.service'
+import { MapComponent } from 'src/app/components/inputs/map/map.component'
+
+interface ICustomPoSelectOption extends PoSelectOption {
+  address: string
+}
 
 @Component({
   selector: "app-place-edit",
@@ -14,6 +19,7 @@ import { LanguagesService } from 'src/app/services/languages.service'
   styleUrls: ["./place-edit.component.scss"],
 })
 export class PlaceEditComponent implements OnInit, OnDestroy {
+  @ViewChild(MapComponent, { static: true }) map: MapComponent
   public id: string
   public readonly = false
   public stateId = ''
@@ -30,9 +36,9 @@ export class PlaceEditComponent implements OnInit, OnDestroy {
   })
 
   public readonly serviceApi = `${environment.baseUrl}/places`
-  public customerIdService = `${environment.baseUrl}/customers/select`
   public stateIdService = `${environment.baseUrl}/states/select`
   public cityIdService = `${environment.baseUrl}/cities/select`
+  public customerOptions: ICustomPoSelectOption[] = []
 
   subscriptions = new Subscription()
 
@@ -54,6 +60,8 @@ export class PlaceEditComponent implements OnInit, OnDestroy {
     this.id = this.activatedRoute.snapshot.paramMap.get("id")
 
     this.pageButtonsBuilder(this.getPageType(this.activatedRoute.snapshot.routeConfig.path))
+
+    this.getCustomers()
 
     if (this.id) {
       this.subscriptions.add(this.getPlace(this.id))
@@ -117,6 +125,22 @@ export class PlaceEditComponent implements OnInit, OnDestroy {
     return
   }
 
+  getCustomers() {
+    this.subscriptions.add(
+      this.restService
+        .get('/customers/select?filter=')
+        .subscribe({
+          next: res => this.customerOptions = res.items
+        })
+    )
+  }
+
+  changeCustomer(event: string) {
+    const { address } = this.customerOptions.find(customer => customer.value === event)
+    this.map.addFixedMarker(address)
+    this.placeForm.patchValue({ address: null })
+  }
+
   getPlace(id: string) {
     this.restService
       .get(`/places/${id}`)
@@ -142,7 +166,7 @@ export class PlaceEditComponent implements OnInit, OnDestroy {
 
   updateSize(event: number) {
     this.placeForm.patchValue({
-      size: String(event)
+      size: String(event / 10000)
     })
   }
 

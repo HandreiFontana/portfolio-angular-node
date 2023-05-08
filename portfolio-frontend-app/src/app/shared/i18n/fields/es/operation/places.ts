@@ -7,14 +7,14 @@ export const placesFields = {
     stateId: 'State',
     cityCityName: 'City',
     cityId: 'City',
-    size: 'Size',
+    size: 'Size (m²)',
   },
   form: {
     placeName: 'Name',
     customerId: 'Customer',
     stateId: 'State',
     cityId: 'City',
-    size: 'Size',
+    size: 'Size (m²)',
     address: 'Address',
   }
 }

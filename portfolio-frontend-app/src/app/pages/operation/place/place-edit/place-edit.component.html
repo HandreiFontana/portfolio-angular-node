@@ -14,16 +14,17 @@
     </div>
 
     <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
-      <po-combo
+      <po-select
         class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
         formControlName="customerId"
         name="customerId"
         p-clean
+        (p-change)="changeCustomer($event)"
         [p-disabled]="readonly"
-        [p-filter-service]="customerIdService"
         [p-label]="this.literals.fields.form['customerId']"
+        [p-options]="customerOptions"
         p-required
-      > </po-combo>
+      > </po-select>
     </div>
 
     <div class="po-sm-12 po-md-6 po-lg-6 po-xl-6 no-padding">
@@ -67,6 +68,7 @@
 
     <div class="po-sm-12">
       <app-map
+        #map
         formControlName="address"
         (changeSize)="updateSize($event)"
         dataType="polygon"

@@ -130,6 +130,7 @@ class CustomerRepository implements ICustomerRepository {
         .select([
           'cus.id as "value"',
           'cus.customerName as "label"',
+          'cus.address as "address"'
         ])
         .where('cus.customerName ilike :filter', { filter: `${filter}%` })
         .addOrderBy('cus.customerName')

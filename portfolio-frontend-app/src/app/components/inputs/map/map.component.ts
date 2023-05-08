@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, forwardRef } from '@angular/core'
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, forwardRef } from '@angular/core'
 import { ControlValueAccessor, FormControlName, NG_VALUE_ACCESSOR } from '@angular/forms'
 import { Map, Marker, Polygon, TileLayer } from 'leaflet'
 import 'leaflet-draw'
@@ -23,11 +23,13 @@ interface ICustomTileLayers {
     }
   ]
 })
-export class MapComponent implements OnInit, ControlValueAccessor {
+export class MapComponent implements OnInit, OnDestroy, ControlValueAccessor {
   private map: Map
   private tileLayer: TileLayer
   private marker: Marker
   private polygon: Polygon
+
+  private fixedMarkerLatLng?: Marker
 
   public tileLayers: ICustomTileLayers[] = [
     { label: 'Rua', value: 'street', tileLayer: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 20 }) },
@@ -40,16 +42,21 @@ export class MapComponent implements OnInit, ControlValueAccessor {
   public value: any
   private onChange: Function
 
-  @Input() formControlName?: FormControlName
   @Input() label?: string
-  @Input() isDisabled?: boolean = false
+  @Input() formControlName?: FormControlName
   @Input() dataType?: 'marker' | 'polygon'
+  @Input() isDisabled?: boolean = false
+
   @Output() changeSize = new EventEmitter<number>()
 
   constructor() { }
 
   ngOnInit(): void {
     this.mapInit()
+  }
+
+  ngOnDestroy(): void {
+    window.location.reload()
   }
 
   // Input Functions
@@ -100,6 +107,13 @@ export class MapComponent implements OnInit, ControlValueAccessor {
         this.polygonAddToMap(value)
         break
     }
+  }
+
+  public addFixedMarker(latLng: any) {
+    this.fixedMarkerLatLng?.remove()
+
+    this.fixedMarkerLatLng = L.marker(latLng).addTo(this.map)
+    this.centerMap('marker', latLng)
   }
 
   // Map Click Functions
