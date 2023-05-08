@@ -10,9 +10,11 @@ export const customersFields = {
     cityId: 'City',
   },
   form: {
+    customerDetails: 'Detalhes do Cliente',
     customerName: 'Name',
     email: 'E-Mail',
     phone: 'Phone',
+    localDetails: 'Localização',
     countryId: 'Country',
     stateId: 'State',
     cityId: 'City',

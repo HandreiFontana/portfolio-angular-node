@@ -1,5 +1,9 @@
 <po-page-default [p-title]="this.literals.title" [p-actions]="pageActions">
   <form [formGroup]="customerForm">
+    <div class="po-sm-12">
+      <po-divider [p-label]="literals.fields.form['customerDetails']"> </po-divider>
+    </div>
+    
     <div class="po-sm-12 po-md-12 po-lg-6 po-xl-6 no-padding">
       <po-input
         class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
@@ -39,9 +43,13 @@
       > </po-input>
     </div>
 
-    <div class="po-sm-12 po-md-12 po-lg-12 po-xl-12 no-padding">
+    <div class="po-sm-12">
+      <po-divider [p-label]="literals.fields.form['localDetails']"> </po-divider>
+    </div>
+
+    <div class="po-sm-12 po-md-12 po-lg-12 po-xl-4 no-padding">
       <po-combo
-        class="po-sm-12 po-md-12 po-lg-4 po-xl-4 po-required"
+        class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
         formControlName="countryId"
         name="countryId"
         p-clean
@@ -52,7 +60,7 @@
       > </po-combo>
     </div>
 
-    <div class="po-sm-12 po-md-6 po-lg-4 po-xl-4 no-padding">
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-4 no-padding">
       <po-combo
         class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
         formControlName="stateId"
@@ -66,7 +74,7 @@
       > </po-combo>
     </div>
 
-    <div class="po-sm-12 po-md-6 po-lg-4 po-xl-4 no-padding">
+    <div class="po-sm-12 po-md-6 po-lg-6 po-xl-4 no-padding">
       <po-combo
         class="po-sm-12 po-md-12 po-lg-12 po-xl-12 po-required"
         formControlName="cityId"
@@ -79,16 +87,10 @@
       > </po-combo>
     </div>
 
-    <div class="po-sm-12 po-md-12 po-lg-12 po-xl-12 no-padding">
-      <po-input
-        class="po-sm-12 po-md-12 po-lg-12 po-xl-12"
-        formControlName="address"
-        name="address"
-        p-clean
-        [p-label]="this.literals.fields.form['address']"
-        p-maxlength="4096"
-        [p-readonly]="readonly"
-      > </po-input>
+    <div class="po-sm-12">
+      <app-map
+        [label]="this.literals.fields.form['address']"
+      > </app-map>
     </div>
 
   </form>

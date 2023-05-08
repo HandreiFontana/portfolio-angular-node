@@ -50,7 +50,8 @@ import { ErrorInterceptorService } from "./services/error-interceptor.service"
 import { NotAuthorizedComponent } from './pages/security/not-authorized/not-authorized.component'
 
 import { SharedModule } from "./shared/shared.module"
-import { i18nConfig } from './shared/i18n'
+import { i18nConfig } from './shared/i18n';
+import { MapComponent } from './components/inputs/map/map.component'
 
 // PO-UI
 @NgModule({
@@ -93,7 +94,8 @@ import { i18nConfig } from './shared/i18n'
     DefaultComponent,
     HomeComponent,
     ProfileComponent,
-    NotAuthorizedComponent
+    NotAuthorizedComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
